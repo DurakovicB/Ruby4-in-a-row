@@ -1,0 +1,10 @@
+class Board
+
+  @@board = []
+@@rows = 6
+@@columns = 7
+
+def initialize()
+
+end
+end
