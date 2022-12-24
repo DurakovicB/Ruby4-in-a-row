@@ -1,33 +1,24 @@
 class Board
-  @@board = []
-  @@rows = 6
-  @@columns = 7
-
   def initialize(*args)
-<<<<<<< HEAD
-    if args[0]==0
-=======
-    if args[0].is_a? Numeric
->>>>>>> ee1629bc6314a56cd139e485b0537fa134ea2b4a
+    if args[0] == 0
       # perform initialization in first case
-      @@board = empty_board()
+      @@board = empty_board
       @@rows = @@board[1].length
       @@columns = @@board.length
-<<<<<<< HEAD
-    elsif args[0]==1
-      @@board = loadBoard()
-      @@rows = @@board[1].length
-      @@columns = @@board.length
-=======
-    elsif args[0].is_a? String
-    # perform initialization in second case
->>>>>>> ee1629bc6314a56cd139e485b0537fa134ea2b4a
+      @@current_player=1
+      @@total_moves =0
+      @@playeronemoves = Array.new()
+      @@playertwomoves = Array.new()
+    elsif args[0] == 1
+      loadBoard
+
     else
       raise TypeError
     end
   end
+
   # printing the Board
-  def print_board()
+  def print_board
     i = 0
     while i < @@rows
       j = 0
@@ -37,7 +28,7 @@ class Board
           print('-')
         elsif @@board[j][i] == 1
           print('X')
-        elsif (@@board[j][i] == 2)
+        elsif @@board[j][i] == 2
           print('O')
         end
         print('] ')
@@ -61,18 +52,13 @@ class Board
     puts(string)
   end
 
-<<<<<<< HEAD
-  def update_column(column,player)
-    i=column.length-1
-    while (i>0 && column[i]!=0) do
-      i-=1
-    end
-    column[i]=player
+  def update_column(column, player)
+    i = column.length - 1
+    i -= 1 while i > 0 && column[i] != 0
+    column[i] = player
   end
 
-=======
->>>>>>> ee1629bc6314a56cd139e485b0537fa134ea2b4a
-  def empty_board()
+  def empty_board
     while true
       puts "\e[H\e[2J"
       print 'Enter board width:'
@@ -81,42 +67,144 @@ class Board
       columns = gets.chomp.to_i
       break if (rows >= 6 && columns >= 7) && ((columns - rows).abs <= 2)
     end
-    board = Array.new(columns) { Array.new(rows) { 0 } }
-    return board
+    Array.new(columns) { Array.new(rows) { 0 } }
   end
-<<<<<<< HEAD
 
-  def loadBoard()
+  def loadBoard
+    file = File.open('reload.txt')
+    read_arrays = file.read.split('W')
+    @@playeronemoves = read_arrays[0].tr('[]', '').split(',')
+    #  playeronemoves
+    @@playertwomoves = read_arrays[1].tr('[]', '').split(',')
+    @@rows = read_arrays[2].to_i
+    @@columns = read_arrays[3].to_i
+    @@board = Array.new(@@columns) { Array.new(@@rows) { 0 } }
+    @@current_player = 1
+    @@total_moves = @@playeronemoves.length + @@playertwomoves.length
+    i = 0
+    while i < playeronemoves.length
+      update_column(@@board[playeronemoves[i].to_i], 1)
+      break if @@board[playertwomoves[i].to_i].nil?
 
-  file = File.open("reload.txt")
-  read_arrays = file.read.split("W")
-  playeronemoves = read_arrays[0].tr('[]', '').split(",")
-#  playeronemoves
-  playertwomoves = read_arrays[1].tr('[]', '').split(",")
-  rows = read_arrays[2].to_i
-  columns = read_arrays[3].to_i
-  board = Array.new(columns) { Array.new(rows) { 0 } }
-  i=0
-  while (i<playeronemoves.length)
-    update_column(@@board[playeronemoves[i].to_i],1)
-    if( @@board[playertwomoves[i].to_i]==nil )
-      break
-    else
-        update_column( @@board[playertwomoves[i].to_i],2)
+      update_column(@@board[playertwomoves[i].to_i], 2)
+
+      i += 1
     end
 
+  end
+
+  def full_row?(row)
+    i = 0
+    while i < row.length
+      return false if row[i] == 0
+
+      i += 1
+    end
+    return true
+  end
+
+  def winning_column_for_player?(column,player)
+  i=column.length-1
+  counter=0
+  while ( i>=0 && column[i]!=0)
+    if column[i]==player
+      counter+=1
+      return true if counter==4
+    else
+      counter=0
+    end
+    i-=1
+  end
+  return false
+  end
+
+  def winning_row_for_player?(row,player)
+  i=0
+  counter=0
+  while ( i<row.length-1)
+    if row[i]==player
+      counter+=1
+      return true if counter==4
+    else
+      counter=0
+    end
     i+=1
+  end
+  return false
+  end
+
+  def vertical_winning_condition_for_player?(player)
+    i=0
+    while (i<@@columns) do
+      if(winning_column_for_player?(@@board[i],player))
+        return true
+      end
+      i+=1
+    end
+    return false
+  end
+
+  def horizontal_winning_condition_for_player?(player)
+    transposed_board = @@board.transpose
+    #print_board(transposed_board)
+    i=@@rows -1
+    while (i>=0) do
+      if(winning_row_for_player?(transposed_board[i],player))
+        return true
+      end
+      i-=1
+    end
+  end
+
+  def play()
+    while true do
+      puts "\e[H\e[2J"
+      print_board(board)
+      puts "P1:"+@@playeronemoves.to_s
+      puts "P2:"+@@playertwomoves.to_s
+      print " Player"+@@current_player.to_s+"'s turn:"
+
+       while true
+         input=gets.chomp.downcase
+         if(input=='save')
+           File.delete('reload.txt') if File.exist?("reload.txt")
+
+           #SAVING BOARD
+
+             File.write('reload.txt',(playeronemoves.to_s+ "W" + playertwomoves.to_s + "W" + rows.to_s + "W" +columns.to_s))
+
+           #BOARD SAVED
+           puts "\e[H\e[2J"
+           print_board(board)
+           print " Player"+current_player.to_s+"'s turn:"
+           input = gets
+         end
+         selected_column =input.to_i-1
+         #print(selected_column)
+        if(selected_column.to_i<=board.length && selected_column.to_i>=0 && !full_row?(board[selected_column]))
+          break
+        else
+          print(" Please enter a valid row:")
+        end
+       end
+       total_moves+=1
+       if(current_player==1)
+         playeronemoves.append(selected_column+1)
+       else
+         playertwomoves.append(selected_column+1)
+       end
+       update_column(board[selected_column],current_player)
+       print_board(board)
+
+
+    if (horizontal_winning_condition_for_player?(board,current_player) or vertical_winning_condition_for_player?(board,current_player) or diagonal_checker?(board,current_player))
+      puts "\e[H\e[2J"
+      print_board(board)
+      puts ("Player"+current_player.to_s+" has won the game!")
+      break
+    end
   end
 end
 
-
-
-end
-
-board1=Board.new(1)
-=======
-end
-
-board1=Board.new(0)
->>>>>>> ee1629bc6314a56cd139e485b0537fa134ea2b4a
-board1.print_board()
+board1 = Board.new(0)
+board1.print_board
