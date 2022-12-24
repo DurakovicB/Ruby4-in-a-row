@@ -1,42 +1,68 @@
-class Board
-  @@board = []
-  @@rows = 6
-  @@columns = 7
-
-  def initialize(*args)
-    if args[0].is_a? Numeric
-      # perform initialization in first case
-      @@rows = args[0]
-      @@columns = args[1]
-    elsif args[0].is_a? String
-    # perform initialization in second case
-      
-    else
-      raise TypeError
-    end
-  end
-  #printing the Board
-
-
-  def print_board(board)
-    i=0
-    while i<board[1].length do
-         j=0
-         while j<board.length do
-           print(" [")
-           if (board[j][i]==0)
-             print("-")
-           elsif board[j][i]==1
-             print("X")
-           elsif board[j][i]=2
-              print("O")
-            end
-
-            print("] ")
-           j+=1
-         end
-
-         puts ""
-         i+=1
-       end
-end
+class Board
+  @@board = []
+  @@rows = 6
+  @@columns = 7
+
+  def initialize(*args)
+    if args[0].is_a? Numeric
+      # perform initialization in first case
+      @@board = empty_board()
+      @@rows = @@board[1].length
+      @@columns = @@board.length
+    elsif args[0].is_a? String
+    # perform initialization in second case
+    else
+      raise TypeError
+    end
+  end
+  # printing the Board
+  def print_board()
+    i = 0
+    while i < @@rows
+      j = 0
+      while j < @@columns
+        print(' [')
+        if @@board[j][i] == 0
+          print('-')
+        elsif @@board[j][i] == 1
+          print('X')
+        elsif (@@board[j][i] == 2)
+          print('O')
+        end
+        print('] ')
+        j += 1
+      end
+      puts ''
+      i += 1
+    end
+    columncounter = 1
+    string = '  '
+    while columncounter <= @@columns
+      if columncounter < 9
+        string += columncounter.to_s
+        string += '.   '
+      else
+        string += columncounter.to_s
+        string += '.  '
+      end
+      columncounter += 1
+    end
+    puts(string)
+  end
+
+  def empty_board()
+    while true
+      puts "\e[H\e[2J"
+      print 'Enter board width:'
+      rows = gets.chomp.to_i
+      print 'Enter board width:'
+      columns = gets.chomp.to_i
+      break if (rows >= 6 && columns >= 7) && ((columns - rows).abs <= 2)
+    end
+    board = Array.new(columns) { Array.new(rows) { 0 } }
+    return board
+  end
+end
+
+board1=Board.new(0)
+board1.print_board()
