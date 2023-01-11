@@ -238,83 +238,21 @@ def win_condition()
 end
 
 def diagonal_winning_condition?()
-  i=0
-  j=0
-  while i<=@@columns
-    while j<=@@rows
-	   if positive_diagonal(i,j) || negative_diagonal(i,j)
-		     return true
-	      end
-        j+=1;
+  @@rows.times do |row|
+    @@columns.times do |col|
+      if row <= @@rows - 4 && col <= @@columns - 4
+        return true if (@@board[row][col] == @@current_player && @@board[row+1][col+1] == @@current_player &&
+                        @@board[row+2][col+2] == @@current_player && @@board[row+3][col+3] == @@current_player)
+      end
+      if row <= @@rows - 4 && col >= 3
+        return true if (@@board[row][col] == @@current_player && @@board[row+1][col-1] == @@current_player &&
+                        @@board[row+2][col-2] == @@current_player && @@board[row+3][col-3] == @@current_player)
+      end
     end
-  i+=1
   end
   return false
 end
 
-def positive_diagonal(row, column)
-	counter = 0
-	i = row
-	j = column
-	while ((i>=0) && (j<@@columns))
-		if @@board[i][j] == @@current_player
-			counter+=1
-			i-=1
-			j+=1
-		else
-			break
-		end
-	end
-	row+=1
-	column-=1
-	while row<@@rows && column>=0
-		if @@board[row][column] == @@current_player
-			counter+=1
-			row+=1
-			column-=1
-		else
-			break
-		end
-    if counter==4
-  		return true
-  	end
-	end
-
-		return false
-
-end
-
-def negative_diagonal(row, column)
-	counter = 0
-	i = row
-	j = column
-	while i<@@rows && j<@@columns
-		if @@board[i][j] == @@current_player
-			counter+=1
-			i+=1
-			j+=1
-		else
-			break
-		end
-	end
-	row-=1
-	column-=1
-	while row>=0 && column>=0
-		if @@board[row][column] == @@current_player
-			counter+=1
-			row-=1
-			column-=1
-		else
-			break
-		end
-    if counter==4
-  		return true
-  	end
-	end
-
-		return false
-
-end
 
 
 end

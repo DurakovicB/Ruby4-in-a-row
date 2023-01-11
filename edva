@@ -1,0 +1,122 @@
+# Set up the board as a two-dimensional array
+def create_board(rows, cols)
+  Array.new(rows) { Array.new(cols, "-") }
+end
+
+# Print the board
+def print_board(board)
+  board.each do |row|
+    puts row.join(" ")
+  end
+end
+
+# Check if a player has won
+def check_win(board, rows, cols, player)
+  # Check for horizontal win
+  board.each do |row|
+    return true if row.join("").include?(player * 4)
+  end
+
+  # Check for vertical win
+  cols.times do |col|
+    rows.times do |row|
+      if row <= rows - 4
+        return true if (board[row][col] == player && board[row+1][col] == player && board[row+2][col] == player && board[row+3][col] == player)
+      end
+    end
+  end
+
+  # Check for diagonal win
+  rows.times do |row|
+    cols.times do |col|
+      if row <= rows - 4 && col <= cols - 4
+        return true if (board[row][col] == player && board[row+1][col+1] == player && board[row+2][col+2] == player && board[row+3][col+3] == player)
+      end
+      if row <= rows - 4 && col >= 3
+        return true if (board[row][col] == player && board[row+1][col-1] == player && board[row+2][col-2] == player && board[row+3][col-3] == player)
+      end
+    end
+  end
+
+  return false
+end
+
+# Main game loop
+def play_game(rows, cols, current_player)
+  board = create_board(rows, cols)
+  while true
+    print_board(board)
+    puts "Player #{current_player}, enter a column to drop your piece (0-#{cols - 1}):"
+    col = gets.chomp.to_i
+    row = rows - 1
+    while row >= 0
+      if board[row][col] == "-"
+        board[row][col] = current_player
+        break
+      end
+      row -= 1
+    end
+
+    if check_win(board, rows, cols, current_player)
+      puts "Player #{current_player} wins!"
+      break
+    end
+
+    if current_player == "◯"
+      current_player = "⬤"
+    else
+      current_player = "◯"
+    end
+  end
+end
+
+# Save game state to file
+def save_game(rows, cols, current_player, board)
+  game_state = {
+    rows: rows,
+    cols: cols,
+    current_player: current_player,
+    board: board
+  }
+  File.open("game_state.bin", "wb") do |f|
+    f.write(Marshal.dump(game_state))
+  end
+end
+# Load game state from file
+def load_game
+  if File.exist?("game_state.bin")
+    game_state = Marshal.load(File.read("game_state.bin"))
+    rows = game_state[:rows]
+    cols = game_state[:cols]
+    current_player = game_state[:current_player]
+    board = game_state[:board]
+    return rows, cols, current_player, board
+  else
+    puts "No saved game found."
+    return nil
+  end
+end
+
+while true
+  puts "Enter 'n' to start a new game, 's' to save the current game, or 'l' to load a saved game:"
+  input = gets.chomp
+  if input == "n"
+    puts "Enter the number of rows for the board:"
+    rows = gets.chomp.to_i
+    puts "Enter the number of columns for the board:"
+    cols = gets.chomp.to_i
+    current_player = "◯"
+    play_game(rows, cols, current_player)
+  elsif input == "s"
+    save_game(rows, cols, current_player, board)
+  elsif input == "l"
+    game_state = load_game
+    if game_state
+      rows, cols, current_player, board = game_state
+      play_game(rows, cols, current_player)
+    end
+  end
+  puts "Do you want to play again? (y/n)"
+  answer = gets.chomp
+  break if answer.downcase != "y"
+end
