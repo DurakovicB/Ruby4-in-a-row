@@ -6,13 +6,13 @@ The project was done as part of the **IT 305 Programming Languages** course at I
 
 ## Team members
 - [Bilal Duraković](https://github.com/DurakovicB/)
-- [Edvin Obralija](https://github.com/)
+- Edvin Obralija
 - [Ishak Kazić](https://github.com/)
 
 
 ## Running the project
 
-To run the project, you will first need to install Ruby.
+To run the project, you will first need to install Ruby. You can follow the steps on [the official webpage](https://rubyinstaller.org/downloads/).
 
 After installing Ruby, follow these steps to run the game:
 ```
