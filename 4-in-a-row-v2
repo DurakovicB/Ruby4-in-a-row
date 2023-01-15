@@ -61,13 +61,23 @@ class Board
   end
 
   def empty_board()
+    invalid_dimensions = false
     while true
       puts "\e[H\e[2J"
+      if(invalid_dimensions==true)
+        puts "Please enter valid dimensions!"
+        puts "The smallest board is 6x7. The width and height must not differ by more than 2."
+      end
       print 'Enter board width:'
       rows = gets.chomp.to_i
       print 'Enter board width:'
       columns = gets.chomp.to_i
-      break if (rows >= 6 && columns >= 7) && ((columns - rows).abs <= 2)
+      if (rows >= 6 && columns >= 7) && ((columns - rows).abs <= 2)
+        break;
+      else
+        invalid_dimensions=true;
+      end
+
     end
     return Array.new(columns) { Array.new(rows) { 0 } }
   end
