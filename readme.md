@@ -21,6 +21,9 @@ cd Ruby4-in-a-row
 ruby 4-in-a-row-v2
 ```
 
+## Project Explanation
+
+
 This is a Ruby Connect 4 game, where two players take turns dropping colored discs into a grid, trying to get four of their own color in a row either horizontally, vertically, or diagonally. The initialize method is a constructor that sets up the state of a new Board object. It takes one argument, an integer. If the integer is 0, it creates a new, empty board. If the integer is 1, it loads a previously saved board from a file called reload.txt. If the integer is anything else, it raises a TypeError.
 
 The print_board method prints the current state of the board to the console. The update_column method updates a column of the board by adding the current player's disc to the first empty position in that column. The empty_board method prompts the user to enter the width and height of the board, and then creates a new, empty board with those dimensions. The loadBoard method loads a previously saved board from a file and updates the state of the Board object accordingly.
